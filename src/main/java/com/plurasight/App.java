@@ -9,46 +9,46 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        try {
-            Scanner keyboard = new Scanner(System.in);
-            FileWriter fileWriter = new FileWriter("src/main/resources/logs.txt");
+        Scanner keyboard = new Scanner(System.in);
 
-            BufferedWriter bufWriter = new BufferedWriter(fileWriter);
+        //System start log message
+        actionLogger("Launch");
 
-            LocalDateTime today = LocalDateTime.now();
+        //Main app function
+        while (true){
+            System.out.print("Enter a search term (X to exit): ");
+            String searchInput = keyboard.nextLine();
 
-            DateTimeFormatter formattedDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-            String logTime = today.format(formattedDate);
-
-            boolean isOn = true;
-            String logEntry;
-
-
-            logEntry = String.format("[%s] Program launched \n", logTime);
-            bufWriter.write(logEntry);
-
-            while (isOn) {
-
-                System.out.print("Enter a search term (X to exit): ");
-                String searchInput = keyboard.nextLine();
-                today = LocalDateTime.now();
-                logTime = today.format(formattedDate);
-                logEntry = String.format("[%s] search: %s \n", logTime, searchInput);
-                bufWriter.write(logEntry);
-
-                if (searchInput.equalsIgnoreCase("x")) {
-                    isOn = false;
-                }
-
+            if (searchInput.equalsIgnoreCase("X")){
+                actionLogger("Exit");
+                System.exit(0);
+            }else {
+                actionLogger("Search - " +searchInput);
             }
-            logEntry = String.format("[%s] Exit", logTime);
-            bufWriter.write(logEntry);
-            bufWriter.close();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
     }
+   public static void actionLogger(String action) {
+        try {
+
+            //Create bufWriter to write to log file
+           FileWriter fileWriter = new FileWriter("src/main/resources/logs.txt", true);
+           BufferedWriter bufWriter = new BufferedWriter(fileWriter);
+
+           //Obtain date and format date
+           LocalDateTime today = LocalDateTime.now();
+           DateTimeFormatter formattedDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+           String logTime = today.format(formattedDate);
+
+           //Log actions from user and write to log file
+           String logEntry = String.format("[%s] %s \n", logTime, action);
+           bufWriter.write(logEntry);
+
+           //Release file
+           bufWriter.close();
+
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+   }
 }
